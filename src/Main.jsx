@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
+import Telegram from "telegram-send-message";
 
 export default class Main extends Component {
   getSlots = async (dateObj) => {
-    console.log(dateObj, "dateObj");
-
     let date = dateObj.getDate();
     let month = dateObj.getMonth();
     let year = dateObj.getFullYear();
@@ -28,23 +27,27 @@ export default class Main extends Component {
     return slots;
   };
 
-  componentDidMount() {
+  initFunc = async () => {
     let today = new Date();
     let tomorrow = new Date(today);
     let dayAfter = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    dayAfter.setDate(dayAfter.getDate() + 2);
+    tomorrow.setDate(tomorrow.getDate() + 4);
+    dayAfter.setDate(dayAfter.getDate() + 5);
     var available_days = [];
-    [today, tomorrow, dayAfter].forEach(async (day) => {
-      let slot = await this.getSlots(day);
-      if (slot.length > 0) {
-        available_days.push(...slot);
-      }
-      console.log(available_days, "SLOTS");
-    });
+    let slot1 = await this.getSlots(today);
+    let slot2 = await this.getSlots(tomorrow);
+    let slot3 = await this.getSlots(dayAfter);
+    available_days = [...slot1, ...slot2, ...slot3];
+    console.log(available_days, "DINGDING");
+    Telegram.setToken(`1867619764:AAH4819PJWF6VBUFpRYDz_bDdwzBB-SAP1c`);
+    // 1867619764:AAH4819PJWF6VBUFpRYDz_bDdwzBB-SAP1c
+    Telegram.setRecipient("406120769");
+    Telegram.setMessage(`Bla bla bla i'm a nerd.`);
+    Telegram.send();
+  };
 
-    // console.log(today.getDate())
-    // this.getSlots(today);
+  componentDidMount() {
+    this.initFunc();
   }
   render() {
     return <div>hi</div>;
